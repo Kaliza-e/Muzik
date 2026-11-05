@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FiMusic, FiMail, FiLock, FiArrowRight, FiZap } from "react-icons/fi";
+import { FiMail, FiLock, FiArrowRight, FiArrowLeft } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
-import musicBg from '../assets/music.jpg';
+import MusicaLogo, { MusicaWordmark } from "./MusicaLogo";
+import MusicalBackground from "./MusicalBackground";
 
 function Login() {
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(null);
   const { login } = useAuth();
@@ -20,118 +21,125 @@ function Login() {
       const result = await login(formData.email, formData.password);
       if (result.success) {
         setAlert({ type: "success", message: "Welcome back to the sound." });
-        setTimeout(() => navigate("/dashboard"), 1500);
+        setTimeout(() => navigate("/dashboard"), 1200);
       } else {
         setAlert({ type: "error", message: result.message || "Authentication failed." });
       }
-    } catch (err) {
-      setAlert({ type: "error", message: "Connection lost. Try again." });
+    } catch {
+      setAlert({ type: "error", message: "Connection lost. Please try again." });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-[#060a16] px-6 overflow-hidden font-['Outfit']">
-      
-      {/* Background with deep cinematic overlay */}
-      <div className="absolute inset-0 z-0">
-        <img
-          src={musicBg}
-          alt="Music Vibe"
-          className="w-full h-full object-cover opacity-30"
-          style={{ filter: 'blur(20px) saturate(1.2)' }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-tr from-[#060a16] via-[#060a16]/80 to-transparent"></div>
-      </div>
+    <div className="relative min-h-screen flex items-center justify-center bg-[#070812] px-6 py-12 overflow-hidden font-['Outfit']">
+      {/* Musical and Glowing Music Effects in Background */}
+      <MusicalBackground />
 
       <div className="relative z-10 w-full max-w-[440px] animate-fade-up">
-        
-        {/* Main Card */}
-        <div className="relative p-1 bg-gradient-to-b from-white/10 to-transparent rounded-[48px]">
-          <div className="relative p-10 md:p-14 rounded-[44px] bg-[#0c1222]/90 backdrop-blur-3xl shadow-2xl overflow-hidden border border-white/5">
-            
-            {/* Header */}
-            <div className="text-center mb-14">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/5 border border-white/10 mb-8">
-                 <FiMusic className="text-3xl text-violet-500" />
+        {/* Navigation Link to go back */}
+        <div className="mb-4 flex items-center justify-between">
+          <Link
+            to="/"
+            aria-label="Back to home page"
+            className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/[0.05] border border-white/[0.09] text-xs font-semibold text-[#B4B2CC] hover:text-white hover:bg-white/[0.09] transition-all min-h-[44px]"
+          >
+            <FiArrowLeft className="text-sm text-[#FF5C93]" />
+            <span>Back to Home</span>
+          </Link>
+
+          <Link
+            to="/dashboard"
+            className="text-[11px] font-bold uppercase tracking-wider text-[#FF5C93] hover:text-white transition-colors"
+          >
+            Explore Player &rarr;
+          </Link>
+        </div>
+
+        {/* Main Login Card */}
+        <div className="p-8 sm:p-12 rounded-[36px] bg-[#0B0D1F]/90 backdrop-blur-2xl border border-white/[0.09] shadow-2xl">
+          {/* Header with new Custom Logo matching reference */}
+          <div className="text-center mb-8">
+            <Link
+              to="/"
+              className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-white/[0.05] border border-white/[0.1] mb-6 hover:border-[#FF3D81]/40 transition-colors shadow-lg group"
+            >
+              <MusicaWordmark className="text-2xl" />
+            </Link>
+            <h2 className="text-3xl font-[900] text-white tracking-tight italic mb-2">
+              Sign In
+            </h2>
+            <p className="text-[#B4B2CC] text-xs font-medium tracking-widest uppercase">
+              Enter your credentials to stream
+            </p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div className="space-y-5">
+              {/* Email Input */}
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#B4B2CC]">
+                  <FiMail className="group-focus-within:text-[#FF3D81] transition-colors" />
+                </div>
+                <input
+                  type="email"
+                  required
+                  placeholder="Email address"
+                  aria-label="Email address"
+                  className="w-full pl-11 pr-4 py-3.5 rounded-[18px] bg-white/[0.04] border border-white/[0.09] text-white placeholder-[#B4B2CC]/50 text-sm focus:outline-none focus:border-[#FF3D81] focus:bg-white/[0.08] transition-all"
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                />
               </div>
-              <h2 className="text-4xl font-extrabold text-white tracking-tight mb-2 italic">Login</h2>
-              <p className="text-white/30 text-xs font-medium tracking-widest uppercase">Enter your credentials</p>
+
+              {/* Password Input */}
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#B4B2CC]">
+                  <FiLock className="group-focus-within:text-[#FF3D81] transition-colors" />
+                </div>
+                <input
+                  type="password"
+                  required
+                  placeholder="Password"
+                  aria-label="Password"
+                  className="w-full pl-11 pr-4 py-3.5 rounded-[18px] bg-white/[0.04] border border-white/[0.09] text-white placeholder-[#B4B2CC]/50 text-sm focus:outline-none focus:border-[#FF3D81] focus:bg-white/[0.08] transition-all"
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                />
+              </div>
             </div>
 
-            <form onSubmit={handleLogin} className="space-y-8">
-              <div className="space-y-6">
-                {/* Refined Email Input */}
-                <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-1 flex items-center pointer-events-none">
-                    <FiMail className="text-white/20 group-focus-within:text-violet-500 transition-colors" />
-                  </div>
-                  <input
-                    type="email"
-                    required
-                    placeholder="Email Address"
-                    className="block w-full pl-10 pr-4 py-4 bg-transparent border-b border-white/10 text-white font-medium placeholder:text-white/10 focus:outline-none focus:border-violet-500 transition-all text-sm tracking-wide"
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  />
-                  <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-gradient-to-r from-violet-500 to-pink-500 group-focus-within:w-full transition-all duration-500"></div>
-                </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-accent w-full py-4 text-xs font-bold tracking-widest uppercase rounded-[20px] shadow-lg shadow-[#FF3D81]/25 flex items-center justify-center gap-2 mt-4"
+            >
+              <span>{loading ? "Authenticating..." : "Enter Sound"}</span>
+              {!loading && <FiArrowRight className="text-sm" />}
+            </button>
+          </form>
 
-                {/* Refined Password Input */}
-                <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-1 flex items-center pointer-events-none">
-                    <FiLock className="text-white/20 group-focus-within:text-pink-500 transition-colors" />
-                  </div>
-                  <input
-                    type="password"
-                    required
-                    placeholder="Password"
-                    className="block w-full pl-10 pr-4 py-4 bg-transparent border-b border-white/10 text-white font-medium placeholder:text-white/10 focus:outline-none focus:border-pink-500 transition-all text-sm tracking-wide"
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  />
-                  <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-gradient-to-r from-pink-500 to-violet-500 group-focus-within:w-full transition-all duration-500"></div>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end pt-2">
-                <button type="button" className="text-[10px] font-bold text-white/20 hover:text-white uppercase tracking-widest transition-colors">
-                  Forgot Password?
-                </button>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="relative w-full py-5 rounded-2xl bg-white text-slate-900 font-bold transition-all hover:scale-[1.02] active:scale-95 shadow-xl disabled:opacity-50 overflow-hidden group/btn"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-violet-500/10 to-pink-500/10 opacity-0 group-hover/btn:opacity-100 transition-opacity"></div>
-                <span className="relative flex items-center justify-center gap-3">
-                  {loading ? "Connecting..." : "Sign In"}
-                  {!loading && <FiArrowRight className="group-hover/btn:translate-x-1 transition-transform" />}
-                </span>
-              </button>
-            </form>
-
-            <div className="mt-12 text-center">
-              <p className="text-white/20 text-xs font-medium">
-                New to Musica?{" "}
-                <Link to="/register" className="text-violet-400 hover:text-violet-300 transition-colors font-bold">
-                  Create Profile
-                </Link>
-              </p>
-            </div>
+          <div className="mt-8 text-center space-y-2">
+            <p className="text-[#B4B2CC] text-xs font-medium">
+              New to Musica?{" "}
+              <Link to="/register" className="text-[#FF5C93] hover:text-white transition-colors font-bold ml-1">
+                Join Beats
+              </Link>
+            </p>
           </div>
         </div>
 
         {/* Status Alerts */}
         {alert && (
-          <div className={`mt-8 p-4 rounded-2xl border text-center animate-fade-up ${
-            alert.type === 'success' ? 'bg-violet-500/10 border-violet-500/20 text-violet-400' : 'bg-red-500/10 border-red-500/20 text-red-400'
-          }`}>
-            <span className="text-xs font-bold uppercase tracking-widest italic">{alert.message}</span>
+          <div
+            className={`mt-4 p-4 rounded-[20px] border text-center text-xs font-bold uppercase tracking-wider ${
+              alert.type === 'success'
+                ? 'bg-[#FF3D81]/10 border-[#FF3D81]/30 text-[#FF5C93]'
+                : 'bg-red-500/10 border-red-500/30 text-red-400'
+            }`}
+          >
+            {alert.message}
           </div>
         )}
-
       </div>
     </div>
   );

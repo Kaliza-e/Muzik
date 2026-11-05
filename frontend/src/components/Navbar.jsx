@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FiMusic, FiMenu, FiX, FiUser } from 'react-icons/fi';
+import { FiMenu, FiX } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
+import MusicaLogo, { MusicaWordmark } from './MusicaLogo';
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -9,73 +10,163 @@ function Navbar() {
   const { isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-[80] transition-all duration-500 px-6 py-4 ${scrolled ? 'md:px-20' : 'md:px-12'}`}>
-      <div className={`max-w-7xl mx-auto flex items-center justify-between px-8 h-16 rounded-2xl border transition-all duration-300 ${scrolled ? 'bg-[#0f172a]/80 backdrop-blur-xl border-white/10 shadow-2xl shadow-black/50' : 'bg-white/5 backdrop-blur-md border-white/5'} text-white`}>
-
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-violet-500 to-pink-500 flex items-center justify-center shadow-lg shadow-violet-500/20 group-hover:scale-110 transition-transform">
-            <FiMusic className="text-xl text-white" />
-          </div>
-          <span className="text-xl font-black tracking-tighter uppercase italic">Musica</span>
+    <nav
+      aria-label="Main Navigation"
+      className={`fixed top-0 left-0 right-0 z-[80] transition-all duration-300 px-4 sm:px-8 md:px-12 py-4 ${
+        scrolled ? 'bg-[#070812]/85 backdrop-blur-xl border-b border-white/[0.08]' : 'bg-transparent'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto flex items-center justify-between h-14">
+        {/* Logo wordmark with integrated U (upside down) and A (upright) */}
+        <Link
+          to="/"
+          className="flex items-center group transition-transform hover:scale-[1.02]"
+          aria-label="Musica Home"
+        >
+          <MusicaWordmark className="text-2xl md:text-3xl" />
         </Link>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-8">
-          <a href="#about" className="text-sm font-bold text-white/60 hover:text-white transition-colors uppercase tracking-widest">About</a>
-          <a href="#contact" className="text-sm font-bold text-white/60 hover:text-white transition-colors uppercase tracking-widest">Contact</a>
+        {/* Desktop Links */}
+        <div className="hidden md:flex items-center gap-10">
+          <a
+            href="#discover"
+            className="text-sm font-medium text-[#B4B2CC] hover:text-white transition-colors tracking-wide"
+          >
+            Discover
+          </a>
+          <a
+            href="#artists"
+            className="text-sm font-medium text-[#B4B2CC] hover:text-white transition-colors tracking-wide"
+          >
+            Artists
+          </a>
+          <a
+            href="#live-music"
+            className="text-sm font-medium text-[#B4B2CC] hover:text-white transition-colors tracking-wide"
+          >
+            Top Tracks
+          </a>
+          <a
+            href="#premium"
+            className="text-sm font-medium text-[#B4B2CC] hover:text-white transition-colors tracking-wide"
+          >
+            Premium
+          </a>
+        </div>
 
-          <div className="h-6 w-px bg-white/10 mx-2"></div>
-
+        {/* Action Button */}
+        <div className="hidden md:flex items-center gap-4">
+          <Link
+            to="/dashboard"
+            className="text-sm font-semibold text-[#FF5C93] hover:text-white transition-colors tracking-wide mr-2"
+          >
+            Open Player
+          </Link>
           {isAuthenticated ? (
-            <div className="flex items-center gap-6">
-              <Link to="/dashboard" className="text-sm font-bold text-violet-400 hover:text-violet-300 transition-colors uppercase tracking-widest">Dashboard</Link>
+            <div className="flex items-center gap-4">
               <button
+                type="button"
                 onClick={logout}
-                className="px-6 py-2 rounded-xl bg-white/5 border border-white/10 text-sm font-bold hover:bg-white/10 transition-all"
+                className="btn-glass px-6 py-2.5 text-xs font-bold tracking-wider rounded-[20px]"
               >
                 Logout
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-4">
-              <Link to="/login" className="text-sm font-bold text-white/60 hover:text-white transition-colors uppercase tracking-widest">Login</Link>
-              <Link to="/register" className="px-6 py-2.5 rounded-xl bg-white text-slate-900 text-sm font-bold hover:scale-105 transition-transform shadow-xl">
-                Get Started
-              </Link>
-            </div>
+            <Link
+              to="/login"
+              className="btn-glass px-7 py-2.5 text-xs font-bold tracking-widest uppercase rounded-[20px]"
+            >
+              Sign In
+            </Link>
           )}
         </div>
 
         {/* Mobile Toggle */}
-        <button className="md:hidden text-white/70 hover:text-white transition-colors" onClick={() => setOpen(!open)}>
-          {open ? <FiX size={24} /> : <FiMenu size={24} />}
+        <button
+          type="button"
+          aria-label={open ? "Close menu" : "Open menu"}
+          className="md:hidden w-11 h-11 flex items-center justify-center rounded-xl bg-white/[0.06] border border-white/[0.09] text-white/90 hover:text-white transition-colors"
+          onClick={() => setOpen(!open)}
+        >
+          {open ? <FiX size={20} /> : <FiMenu size={20} />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Drawer */}
       {open && (
-        <div className="absolute top-24 left-6 right-6 p-8 rounded-3xl bg-[#0f172a] border border-white/10 shadow-2xl md:hidden animate-scale-in">
-          <div className="flex flex-col gap-6 text-center">
-            <a href="#about" onClick={() => setOpen(false)} className="text-lg font-bold text-white">About</a>
-            <a href="#contact" onClick={() => setOpen(false)} className="text-lg font-bold text-white">Contact</a>
-            <div className="h-px bg-white/5 w-full"></div>
+        <div className="mt-3 p-6 rounded-[28px] bg-[#0B0D1F] border border-white/[0.09] shadow-2xl md:hidden animate-scale-in">
+          <div className="flex flex-col gap-4 text-center">
+            <a
+              href="#discover"
+              onClick={() => setOpen(false)}
+              className="py-2 text-base font-medium text-[#B4B2CC] hover:text-white transition-colors"
+            >
+              Discover
+            </a>
+            <a
+              href="#artists"
+              onClick={() => setOpen(false)}
+              className="py-2 text-base font-medium text-[#B4B2CC] hover:text-white transition-colors"
+            >
+              Artists
+            </a>
+            <a
+              href="#live-music"
+              onClick={() => setOpen(false)}
+              className="py-2 text-base font-medium text-[#B4B2CC] hover:text-white transition-colors"
+            >
+              Top Tracks
+            </a>
+            <a
+              href="#premium"
+              onClick={() => setOpen(false)}
+              className="py-2 text-base font-medium text-[#B4B2CC] hover:text-white transition-colors"
+            >
+              Premium
+            </a>
+            <div className="h-px bg-white/[0.08] my-1 w-full" />
+            <Link
+              to="/dashboard"
+              onClick={() => setOpen(false)}
+              className="py-3 rounded-[20px] bg-white/[0.06] text-[#FF5C93] font-bold text-sm tracking-wider"
+            >
+              Open Player
+            </Link>
             {isAuthenticated ? (
-              <>
-                <Link to="/dashboard" onClick={() => setOpen(false)} className="text-lg font-bold text-violet-400">Dashboard</Link>
-                <button onClick={() => { logout(); setOpen(false); }} className="text-lg font-bold text-red-400">Logout</button>
-              </>
+              <button
+                type="button"
+                onClick={() => {
+                  logout();
+                  setOpen(false);
+                }}
+                className="py-3 text-sm font-semibold text-red-400 hover:text-red-300"
+              >
+                Logout
+              </button>
             ) : (
-              <>
-                <Link to="/login" onClick={() => setOpen(false)} className="text-lg font-bold text-white">Login</Link>
-                <Link to="/register" onClick={() => setOpen(false)} className="py-4 rounded-2xl bg-white text-slate-900 font-bold">Get Started</Link>
-              </>
+              <div className="flex flex-col gap-3 pt-2">
+                <Link
+                  to="/login"
+                  onClick={() => setOpen(false)}
+                  className="btn-glass py-3 text-xs tracking-widest uppercase text-center rounded-[20px]"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={() => setOpen(false)}
+                  className="btn-accent py-3 text-xs tracking-widest uppercase text-center rounded-[20px]"
+                >
+                  Join Beats
+                </Link>
+              </div>
             )}
           </div>
         </div>

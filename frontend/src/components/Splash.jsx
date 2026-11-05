@@ -1,129 +1,120 @@
 import React, { useEffect, useState } from 'react';
-import { FiMusic, FiZap, FiArrowRight, FiUserPlus, FiLogIn } from 'react-icons/fi';
+import { FiZap, FiArrowRight, FiUserPlus, FiLogIn, FiX } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
-import musicBg from '../assets/music.jpg';
+import MusicaLogo, { MusicaWordmark } from './MusicaLogo';
+import MusicalBackground from './MusicalBackground';
 
-function Splash() {
+// Deterministic audio bar heights to avoid impure Math.random() in render
+const AUDIO_BAR_HEIGHTS = [
+  40, 65, 30, 85, 45, 95, 60, 30, 75, 50,
+  90, 35, 70, 85, 40, 100, 55, 30, 65, 80,
+  45, 70, 90, 35, 60, 85, 50, 40, 95, 65,
+  30, 80, 45, 90, 60, 35, 75, 85, 40, 70
+];
+
+function Splash({ onFinish }) {
   const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowContent(true);
-    }, 1000);
+    }, 400);
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#060a16] overflow-hidden font-['Outfit']">
-      
-      {/* Background Image with Deep Overlay */}
-      <div className="absolute inset-0 z-0">
-        <img
-          src={musicBg}
-          alt="Music Vibe"
-          className="w-full h-full object-cover opacity-30 scale-110 animate-float"
-          style={{ filter: 'blur(8px) saturate(1.5)' }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#060a16]/95 via-[#060a16]/70 to-[#060a16]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.1),transparent_70%)]"></div>
-      </div>
-      
-      {/* Cyberpunk Glows */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
-        <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-violet-600/20 blur-[150px] rounded-full animate-pulse"></div>
-        <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-pink-600/20 blur-[150px] rounded-full animate-pulse delay-500"></div>
-      </div>
-      
-      <div className="relative z-20 w-full max-w-xl px-6 text-center">
-        
-        {/* Futuristic Logo Container */}
-        <div className="mb-14 animate-scale-in">
-          <div className="relative inline-block p-1 rounded-[44px] bg-gradient-to-tr from-violet-500 via-pink-500 to-cyan-400">
-            <div className="w-28 h-28 rounded-[40px] bg-[#060a16] flex items-center justify-center relative z-10">
-              <FiMusic className="text-6xl text-transparent bg-clip-text bg-gradient-to-tr from-violet-500 to-pink-500 animate-pulse" />
-            </div>
-            {/* Outer Glow */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-violet-500 to-pink-500 blur-2xl opacity-40 animate-pulse"></div>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#070812] overflow-hidden font-['Outfit']">
+      {/* Musical and glowing effects in background */}
+      <MusicalBackground />
+
+      {/* Dismiss / close button */}
+      {onFinish && (
+        <button
+          type="button"
+          onClick={onFinish}
+          aria-label="Skip splash screen"
+          className="absolute top-6 right-6 z-30 w-11 h-11 rounded-full bg-white/[0.06] border border-white/[0.1] text-white/70 hover:text-white flex items-center justify-center transition-colors"
+        >
+          <FiX size={20} />
+        </button>
+      )}
+
+      <div className="relative z-20 w-full max-w-lg px-6 text-center">
+        {/* Custom Logo matching reference */}
+        <div className="mb-8 animate-scale-in flex justify-center">
+          <div className="w-24 h-24 rounded-[32px] bg-white/[0.05] border border-white/[0.12] flex items-center justify-center shadow-2xl relative group">
+            <MusicaLogo size={58} />
           </div>
         </div>
 
         {/* Brand Content */}
-        <div className={`space-y-8 transition-all duration-1000 transform ${showContent ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+        <div
+          className={`space-y-6 transition-all duration-700 transform ${
+            showContent ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+          }`}
+        >
           <div className="space-y-3">
-            <h1 className="text-8xl md:text-9xl font-black text-white tracking-[15px] uppercase italic leading-none ml-4">
-              Musica<span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-500 to-pink-500">.</span>
-            </h1>
-            <div className="flex items-center justify-center gap-4 text-white/40 text-[11px] font-black tracking-[1em] uppercase">
-              <div className="h-px w-8 bg-white/10"></div>
+            <div className="flex justify-center">
+              <MusicaWordmark className="text-6xl sm:text-7xl md:text-8xl leading-none" />
+            </div>
+            <div className="flex items-center justify-center gap-3 text-[#B4B2CC] text-[10px] sm:text-[11px] font-bold tracking-[0.35em] uppercase">
+              <span className="h-px w-8 bg-white/10" />
               <span>Premium</span>
-              <FiZap className="text-violet-500 animate-pulse" />
+              <FiZap className="text-[#FF3D81]" />
               <span>Experience</span>
-              <div className="h-px w-8 bg-white/10"></div>
+              <span className="h-px w-8 bg-white/10" />
             </div>
           </div>
 
-          <p className="text-white/50 text-xl font-medium max-w-sm mx-auto leading-relaxed italic">
-            "Your rhythm, redefined by <span className="text-white">innovation</span>."
+          <p className="text-[#B4B2CC] text-lg sm:text-xl font-normal max-w-sm mx-auto leading-relaxed italic">
+            &ldquo;Your rhythm, redefined by{' '}
+            <span className="text-white font-semibold not-italic">innovation</span>.&rdquo;
           </p>
 
-          <div className="flex flex-col gap-8 pt-12 max-w-sm mx-auto">
-            
-            {/* Neon Backlit Login Button */}
-            <div className="relative group">
-               <div className="absolute -inset-1 bg-gradient-to-r from-violet-600 to-pink-600 rounded-[24px] blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
-               <Link 
-                to="/login" 
-                className="relative flex items-center justify-center gap-4 w-full py-6 rounded-[22px] bg-black border border-white/10 text-white font-black transition-all hover:border-white/20 active:scale-95 shadow-2xl"
-               >
-                <div className="absolute inset-0 overflow-hidden rounded-[22px]">
-                   <div className="absolute inset-0 bg-gradient-to-r from-violet-600/10 to-pink-600/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                </div>
-                <FiLogIn className="text-2xl text-violet-500 group-hover:scale-110 transition-transform" />
-                <span className="text-xl tracking-[4px] uppercase italic">Enter Sound</span>
-                <FiArrowRight className="text-xl opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all" />
-               </Link>
-            </div>
-
-            {/* Futuristic Glass Signup Button */}
-            <Link 
-              to="/register" 
-              className="group relative flex items-center justify-center gap-4 w-full py-6 rounded-[22px] bg-white/5 border border-white/10 backdrop-blur-3xl text-white font-black transition-all hover:bg-white/10 hover:border-violet-500/50 active:scale-95 shadow-inner"
+          <div className="flex flex-col gap-4 pt-6 max-w-xs mx-auto">
+            {/* Enter Sound Button */}
+            <Link
+              to="/login"
+              className="btn-accent w-full py-4 rounded-[20px] text-xs font-bold tracking-widest uppercase flex items-center justify-center gap-3 shadow-lg shadow-[#FF3D81]/25"
             >
-              <div className="absolute -inset-[1px] bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity rounded-[22px]"></div>
-              <FiUserPlus className="text-2xl text-pink-500" />
-              <span className="text-xl tracking-[4px] uppercase italic">Join Beats</span>
-              
-              {/* Soundwave bars inside button */}
-              <div className="flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                 {[1,2,3].map(i => (
-                    <div key={i} className={`w-0.5 bg-pink-500 rounded-full animate-bounce h-${i*2}`} style={{ animationDelay: `${i*0.2}s` }}></div>
-                 ))}
-              </div>
+              <FiLogIn className="text-lg" />
+              <span>Enter Sound</span>
+              <FiArrowRight className="text-base" />
             </Link>
-          </div>
 
-          {/* Minimal Navigation */}
-          <div className="pt-16">
-            <button className="text-white/20 hover:text-cyan-400 transition-all text-[10px] font-black uppercase tracking-[1em] flex items-center justify-center gap-6 mx-auto group">
-              <span className="h-px w-12 bg-white/5 group-hover:bg-cyan-500/50 transition-all"></span>
-              Explore
-              <span className="h-px w-12 bg-white/5 group-hover:bg-cyan-500/50 transition-all"></span>
-            </button>
+            {/* Join Beats Button */}
+            <Link
+              to="/register"
+              className="btn-glass w-full py-4 rounded-[20px] text-xs font-bold tracking-widest uppercase flex items-center justify-center gap-3"
+            >
+              <FiUserPlus className="text-lg text-[#FF5C93]" />
+              <span>Join Beats</span>
+            </Link>
+
+            {/* Explore Landing Page Button */}
+            {onFinish && (
+              <button
+                type="button"
+                onClick={onFinish}
+                className="pt-4 text-[10px] font-bold uppercase tracking-[0.25em] text-[#B4B2CC]/60 hover:text-white transition-colors"
+              >
+                Skip to Landing Page &rarr;
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Audio Spectrum Footer */}
-        <div className="absolute bottom-[-100px] left-[-10%] right-[-10%] flex items-end justify-center gap-1.5 h-40 opacity-20 pointer-events-none">
-          {Array.from({ length: 40 }).map((_, i) => (
+        {/* Audio Spectrum Graphic */}
+        <div className="absolute bottom-[-110px] left-[-10%] right-[-10%] flex items-end justify-center gap-1.5 h-36 opacity-20 pointer-events-none">
+          {AUDIO_BAR_HEIGHTS.map((height, i) => (
             <div
               key={i}
-              className="w-1.5 bg-gradient-to-t from-violet-500 via-pink-500 to-cyan-400 rounded-full animate-float"
+              className="w-1.5 rounded-full bg-gradient-to-t from-[#FF3D81] to-[#1D1B52]"
               style={{
-                height: `${Math.random() * 80 + 20}%`,
-                animationDelay: `${i * 50}ms`,
-                animationDuration: `${Math.random() * 1 + 0.5}s`
+                height: `${height}%`,
+                animationDelay: `${i * 40}ms`,
               }}
-            ></div>
+            />
           ))}
         </div>
       </div>
