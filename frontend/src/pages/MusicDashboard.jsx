@@ -20,6 +20,8 @@ import { spotifyAPI } from '../api';
 import { useAuth } from '../context/AuthContext';
 import MusicaLogo, { MusicaWordmark } from '../components/MusicaLogo';
 import MusicalBackground from '../components/MusicalBackground';
+import InteractiveVinyl from '../components/InteractiveVinyl';
+import EqualizerBars from '../components/EqualizerBars';
 
 function MusicDashboard() {
   const { user } = useAuth();
@@ -667,17 +669,13 @@ function MusicDashboard() {
             />
 
             {/* Left: Song Info */}
-            <div className="flex items-center gap-3 w-full sm:w-auto md:w-1/4 min-w-0">
-              <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-[#FF3D81] to-[#1D1B52] overflow-hidden shrink-0 flex items-center justify-center border border-white/10">
-                {currentSong?.cover ? (
-                  <img
-                    src={currentSong.cover}
-                    alt={currentSong.title}
-                    className={`w-full h-full object-cover ${isPlaying ? 'scale-105' : ''}`}
-                  />
-                ) : (
-                  <MusicIcon className="w-5 h-5 text-white/50" />
-                )}
+            <div className="flex items-center gap-3.5 w-full sm:w-auto md:w-1/4 min-w-0">
+              <div className="shrink-0 flex items-center justify-center">
+                <InteractiveVinyl
+                  isPlaying={isPlaying}
+                  coverImage={currentSong?.cover || '/images/card-vinyl.jpg'}
+                  size={46}
+                />
               </div>
               <div className="min-w-0 flex-1">
                 <h4 className="text-xs sm:text-sm font-bold text-white truncate italic uppercase tracking-wider">

@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { FiMenu, FiX } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
-import MusicaLogo, { MusicaWordmark } from './MusicaLogo';
+import { MusicaWordmark } from './MusicaLogo';
+import MagneticButton from './MagneticButton';
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const { isAuthenticated, logout } = useAuth();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
@@ -15,10 +17,17 @@ function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const navLinks = [
+    { label: 'Discover', href: '#discover' },
+    { label: 'Artists', href: '#artists' },
+    { label: 'Top Tracks', href: '#live-music' },
+    { label: 'Pricing', href: '#pricing' },
+  ];
+
   return (
     <nav
       aria-label="Main Navigation"
-      className={`fixed top-0 left-0 right-0 z-[80] transition-all duration-300 px-4 sm:px-8 md:px-12 py-4 ${
+      className={`fixed top-0 left-0 right-0 z-[80] transition-all duration-300 px-4 sm:px-8 md:px-12 py-4 animate-fade-down ${
         scrolled ? 'bg-[#070812]/85 backdrop-blur-xl border-b border-white/[0.08]' : 'bg-transparent'
       }`}
     >
@@ -29,47 +38,44 @@ function Navbar() {
           className="flex items-center group transition-transform hover:scale-[1.02]"
           aria-label="Musica Home"
         >
-          <MusicaWordmark className="text-2xl md:text-3xl" />
+          <MusicaWordmark className="text-2xl md:text-3xl" enableParallax={true} />
         </Link>
 
-        {/* Desktop Links */}
+        {/* Desktop Links (staggered entrance + animated underline + active glowing dot) */}
         <div className="hidden md:flex items-center gap-10">
-          <a
-            href="#discover"
-            className="text-sm font-medium text-[#B4B2CC] hover:text-white transition-colors tracking-wide"
-          >
-            Discover
-          </a>
-          <a
-            href="#artists"
-            className="text-sm font-medium text-[#B4B2CC] hover:text-white transition-colors tracking-wide"
-          >
-            Artists
-          </a>
-          <a
-            href="#live-music"
-            className="text-sm font-medium text-[#B4B2CC] hover:text-white transition-colors tracking-wide"
-          >
-            Top Tracks
-          </a>
-          <a
-            href="#premium"
-            className="text-sm font-medium text-[#B4B2CC] hover:text-white transition-colors tracking-wide"
-          >
-            Premium
-          </a>
+          {navLinks.map((item, index) => {
+            const isActive = location.hash === item.href;
+            return (
+              <a
+                key={item.label}
+                href={item.href}
+                className={`nav-link-animated text-sm font-medium tracking-wide transition-colors flex items-center gap-1.5 ${
+                  isActive ? 'text-white nav-link-active' : 'text-[#B4B2CC] hover:text-white'
+                }`}
+                style={{ animationDelay: `${index * 60}ms` }}
+              >
+                <span>{item.label}</span>
+                {isActive && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF3D81] shadow-[0_0_8px_#FF3D81]" />
+                )}
+              </a>
+            );
+          })}
         </div>
 
-        {/* Action Button */}
+        {/* Action Buttons with Magnetic Pull */}
         <div className="hidden md:flex items-center gap-4">
-          <Link
-            to="/dashboard"
-            className="text-sm font-semibold text-[#FF5C93] hover:text-white transition-colors tracking-wide mr-2"
-          >
-            Open Player
-          </Link>
+          <MagneticButton>
+            <Link
+              to="/dashboard"
+              className="text-sm font-semibold text-[#FF5C93] hover:text-white transition-colors tracking-wide px-3 py-2"
+            >
+              Open Player
+            </Link>
+          </MagneticButton>
+
           {isAuthenticated ? (
-            <div className="flex items-center gap-4">
+            <MagneticButton>
               <button
                 type="button"
                 onClick={logout}
@@ -77,21 +83,23 @@ function Navbar() {
               >
                 Logout
               </button>
-            </div>
+            </MagneticButton>
           ) : (
-            <Link
-              to="/login"
-              className="btn-glass px-7 py-2.5 text-xs font-bold tracking-widest uppercase rounded-[20px]"
-            >
-              Sign In
-            </Link>
+            <MagneticButton>
+              <Link
+                to="/login"
+                className="btn-glass px-7 py-2.5 text-xs font-bold tracking-widest uppercase rounded-[20px]"
+              >
+                Sign In
+              </Link>
+            </MagneticButton>
           )}
         </div>
 
         {/* Mobile Toggle */}
         <button
           type="button"
-          aria-label={open ? "Close menu" : "Open menu"}
+          aria-label={open ? 'Close menu' : 'Open menu'}
           className="md:hidden w-11 h-11 flex items-center justify-center rounded-xl bg-white/[0.06] border border-white/[0.09] text-white/90 hover:text-white transition-colors"
           onClick={() => setOpen(!open)}
         >
@@ -103,34 +111,16 @@ function Navbar() {
       {open && (
         <div className="mt-3 p-6 rounded-[28px] bg-[#0B0D1F] border border-white/[0.09] shadow-2xl md:hidden animate-scale-in">
           <div className="flex flex-col gap-4 text-center">
-            <a
-              href="#discover"
-              onClick={() => setOpen(false)}
-              className="py-2 text-base font-medium text-[#B4B2CC] hover:text-white transition-colors"
-            >
-              Discover
-            </a>
-            <a
-              href="#artists"
-              onClick={() => setOpen(false)}
-              className="py-2 text-base font-medium text-[#B4B2CC] hover:text-white transition-colors"
-            >
-              Artists
-            </a>
-            <a
-              href="#live-music"
-              onClick={() => setOpen(false)}
-              className="py-2 text-base font-medium text-[#B4B2CC] hover:text-white transition-colors"
-            >
-              Top Tracks
-            </a>
-            <a
-              href="#premium"
-              onClick={() => setOpen(false)}
-              className="py-2 text-base font-medium text-[#B4B2CC] hover:text-white transition-colors"
-            >
-              Premium
-            </a>
+            {navLinks.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className="py-2 text-base font-medium text-[#B4B2CC] hover:text-white transition-colors"
+              >
+                {item.label}
+              </a>
+            ))}
             <div className="h-px bg-white/[0.08] my-1 w-full" />
             <Link
               to="/dashboard"
